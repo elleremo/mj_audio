@@ -10,6 +10,7 @@ class MjPodcastFeed {
 		$this->file        = $file;
 		$this->plugin_path = plugin_dir_path( $file );
 		add_action( 'init', array( $this, 'add_multi_feed' ), 11 );
+		add_action( 'init', array( $this, 'general_feed' ), 11 );
 
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
@@ -56,11 +57,14 @@ class MjPodcastFeed {
 		return false;
 	}
 
+	public function general_feed(){
+        add_feed( $this->slug."/all", array( $this, 'feed_markup_general' ) );
+    }
+
 	public function add_multi_feed() {
 
 		$terms = $this->get_feed_pages();
 		foreach ( $terms as $term ) {
-//			d($term->slug);
 			$this->add_feed( $term->slug );
 		}
 
@@ -80,6 +84,21 @@ class MjPodcastFeed {
 		}
 	}
 
+	function feed_markup_general() {
+		header( 'Content-Type: ' . feed_content_type( 'rss' ) . '; charset=' . get_option( 'blog_charset' ), true );
+		status_header( 200 );
+
+		global $wp_query;
+
+		do_action( 'mj_before_feed' );
+
+		$template = apply_filters( 'mj_template_rss', $this->plugin_path . "templates/feed-general-podcast.php" );
+
+		include( $template );
+		do_action( 'mj_after_feed' );
+		exit;
+	}
+
 	function feed_markup() {
 		header( 'Content-Type: ' . feed_content_type( 'rss' ) . '; charset=' . get_option( 'blog_charset' ), true );
 		status_header( 200 );
@@ -88,7 +107,7 @@ class MjPodcastFeed {
 		do_action( 'mj_before_feed' );
 
 		$template = apply_filters( 'mj_template_rss', $this->plugin_path . "templates/feed-podcast.php" );
-//		$template = apply_filters( 'mj_template_rss', $this->plugin_path . "templates/test.php" );
+
 		require( $template );
 
 		do_action( 'mj_after_feed' );

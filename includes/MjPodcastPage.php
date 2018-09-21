@@ -20,7 +20,7 @@ class MjPodcastPage {
 			array(),
 			$this->version
 		);
-		if ( has_shortcode( $post->post_content, $this->shortcode ) ) {
+		if ( is_object($post) && has_shortcode( $post->post_content, $this->shortcode ) ) {
 			wp_enqueue_style( 'MjPodcastPage_css' );
 		}
 	}
