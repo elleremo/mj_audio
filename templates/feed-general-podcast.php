@@ -101,6 +101,7 @@ $t_modified_date = function () {
                     $current_term = $current_term->term_id;
                 }
                 $t_term_link = get_term_link(intval($current_term), 'audio-page');
+                $current_term_fields = get_fields( 'term_' . $current_term );
                 ?>
 
                 <?php $fields = get_fields($post->ID); ?>
@@ -112,10 +113,12 @@ $t_modified_date = function () {
                     <dc:creator><?php echo $fields['creator']; ?></dc:creator>
                     <guid isPermaLink="false"><?php echo esc_html(get_the_guid($post)); ?></guid>
                     <description><![CDATA[<?php echo sanitize_text_field($fields['description']); ?>]]></description>
+                    $t_fields['image']['url']
                     <itunes:subtitle>
                         <![CDATA[<?php echo mb_substr(sanitize_text_field($fields['description']), 0, 210) . "..."; ?>
                         ]]>
                     </itunes:subtitle>
+                    <itunes:image href="<?php echo esc_url( $current_term_fields['image']['url'] ); ?>"/>
                     <content:encoded><![CDATA[<?php echo sanitize_text_field($fields['description']); ?>]]>
                     </content:encoded>
                     <itunes:summary><![CDATA[<?php echo sanitize_text_field($fields['description']); ?>]]>
